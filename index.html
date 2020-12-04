@@ -17,11 +17,22 @@
         canvas.height = document.documentElement.clientHeight
         let painting = false
         var ctx = canvas.getContext("2d");
-        ctx.fillStyle = "black";
+        var last
+        ctx.fillStyle = "black"
+        ctx.lineWidth = '10'
+        ctx.lineCap = 'round'
+
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
 
         var isTouchDevice = ('ontouchstart' in document.documentElement);
         if (isTouchDevice) {
-            canvas.ontouchmove = (e)=>{
+            
+            canvas.ontouchmove = (e) => {
                 let x = e.touches[0].clientX
                 let y = e.touches[0].clientY
                 ctx.beginPath();
@@ -29,18 +40,18 @@
                 ctx.fill();
             }
         } else {
-            canvas.onmousedown = () => {
+            canvas.onmousedown = (e) => {
                 painting = true
+                last = [e.clientX ,e.clientY]
             }
 
             canvas.onmousemove = (e) => {
                 if (painting === true) {
-                    ctx.beginPath();
-                    ctx.arc(e.clientX, e.clientY, 5, 0, 2 * Math.PI);
-                    ctx.fill();
-                } else {
-                    console.log('放开了')
-                }
+                    drawLine(last[0],last[1],e.clientX,e.clientY)
+
+                    last = [e.clientX, e.clientY]
+                } 
+                
             }
 
             canvas.onmouseup = () => {
